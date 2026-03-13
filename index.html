@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparateur Entretien Holland Bikes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="bg-teal-700 p-6 text-white text-center">
+            <h1 class="text-2xl font-bold uppercase tracking-wide">Simulateur d'Économies Entretien</h1>
+            <p class="opacity-80 mt-1 text-sm italic">Outil d'aide à la vente - Holland Bikes</p>
+        </div>
+
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b-2 border-gray-100 text-gray-500 text-sm uppercase">
+                            <th class="py-3 px-2">Prestation</th>
+                            <th class="py-3 px-2 text-center">Quantité /an</th>
+                            <th class="py-3 px-2 text-right">Tarif Public</th>
+                            <th class="py-3 px-2 text-right text-teal-700">Tarif Abo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="services-list" class="divide-y divide-gray-50">
+                        </tbody>
+                </table>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                    <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">Total à la prestation</p>
+                    <p id="total-sans" class="text-4xl font-black text-gray-800">0€</p>
+                    <p class="text-xs text-gray-400 mt-1 italic">Basé sur les tarifs atelier standards</p>
+                </div>
+
+                <div class="bg-teal-50 p-5 rounded-xl border-2 border-teal-500 relative overflow-hidden">
+                    <div class="relative z-10">
+                        <p class="text-xs text-teal-700 uppercase font-bold tracking-wider text-center">Coût avec Abonnement</p>
+                        <p id="total-avec" class="text-4xl font-black text-teal-700 text-center">300€</p>
+                        <p class="text-center text-xs text-teal-600 font-medium">Incluant le coût de l'adhésion (300€)</p>
+                        <div id="eco-badge" class="mt-4 bg-teal-600 text-white text-center py-2 rounded-lg font-bold hidden animate-bounce">
+                            Économie : <span id="economie-val">0</span>€
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="mt-6 text-[10px] text-gray-400 text-center uppercase tracking-widest italic leading-relaxed">
+                * Les tarifs incluent la main d'œuvre. Pièces incluses sauf mention contraire.<br>
+                Estimation basée sur l'abonnement annuel Holland Bikes.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Configuration des tarifs basés sur tes documents
+        const services = [
+            { id: 'rev', name: 'Révision Complète VAE', hors: 75, avec: 0 },
+            { id: 'crev', name: 'Réparation Crevaison (Pièce incl.)', hors: 25, avec: 0 },
+            { id: 'plaq', name: 'Plaquettes Frein AV ou AR (Pièce incl.)', hors: 35, avec: 0 },
+            { id: 'regl', name: 'Réglages Freins + Vitesses', hors: 45, avec: 0 },
+            { id: 'dev', name: 'Dévoilage de roue', hors: 20, avec: 0 },
+            { id: 'cab', name: 'Câbles & Gaines (Pièce incl.)', hors: 15, avec: 0 },
+            { id: 'chain', name: 'Kit Chaîne + Cassette (Pièces non incl.)', hors: 75, avec: 35 },
+            { id: 'pneu', name: 'Changement Pneu (Pièces non incl.)', hors: 60, avec: 45 }
+        ];
+
+        const list = document.getElementById('services-list');
+        const prixAboFixe = 300;
+
+        function render() {
+            list.innerHTML = services.map(s => `
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="py-4 px-2">
+                        <div class="font-semibold text-gray-700">${s.name}</div>
+                    </td>
+                    <td class="py-4 px-2 text-center">
+                        <select id="qty-${s.id}" onchange="calculate()" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 p-1 px-3">
+                            ${[0,1,2,3,4,5].map(v => `<option value="${v}">${v}</option>`).join('')}
+                        </select>
+                    </td>
+                    <td class="py-4 px-2 text-right text-gray-400 font-medium">${s.hors}€</td>
+                    <td class="py-4 px-2 text-right text-teal-600 font-bold">${s.avec}€</td>
+                </tr>
+            `).join('');
+        }
+
+        function calculate() {
+            let totalHors = 0;
+            let totalAbo = prixAboFixe;
+
+            services.forEach(s => {
+                const qty = parseInt(document.getElementById(`qty-${s.id}`).value);
+                totalHors += (s.hors * qty);
+                totalAbo += (s.avec * qty);
+            });
+
+            document.getElementById('total-sans').innerText = totalHors + "€";
+            document.getElementById('total-avec').innerText = totalAbo + "€";
+            
+            const diff = totalHors - totalAbo;
+            const badge = document.getElementById('eco-badge');
+            const val = document.getElementById('economie-val');
+
+            if (diff > 0) {
+                badge.classList.remove('hidden');
+                val.innerText = diff;
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        render();
+    </script>
+</body>
+</html>
