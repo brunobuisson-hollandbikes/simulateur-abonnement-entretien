@@ -11,59 +11,55 @@
     </style>
 </head>
 <body class="bg-gray-100 p-2 md:p-8">
-    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
         
         <div class="hb-blue p-4 text-white text-center">
-            <img src="Logo abonnement entretien.png" alt="Holland Bikes Abonnements" class="max-h-48 mx-auto object-contain">
+            <img src="Logo abonnement entretien.png" alt="Holland Bikes Abonnements" class="max-h-40 mx-auto object-contain">
         </div>
 
-        <div class="p-4 text-center border-b italic text-gray-500 bg-gray-50 text-xs">
-            Simulation basée sur les besoins annuels d'entretien du client.
+        <div class="p-4 md:p-8 bg-white">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 text-center order-2 md:order-1">
+                    <p class="text-[10px] text-gray-500 uppercase font-bold mb-1 tracking-wider">Total sans abonnement</p>
+                    <p id="total-sans" class="text-4xl font-black text-gray-800">0€</p>
+                </div>
+
+                <div class="bg-blue-50 p-6 rounded-xl border-2 border-blue-900 text-center order-1 md:order-2 shadow-sm">
+                    <p class="text-[10px] hb-text-blue uppercase font-bold mb-1 tracking-wider">Total avec abonnement</p>
+                    <p id="total-avec" class="text-4xl font-black hb-text-blue">0€</p>
+                </div>
+            </div>
+            
+            <div id="eco-banner" class="bg-green-500 text-white text-center py-5 rounded-xl font-black text-2xl shadow-lg mb-8 hidden animate-pulse">
+                GAIN POUR LE CLIENT : <span id="economie-val">0</span>€ / an
+            </div>
         </div>
 
-        <div class="p-4 md:p-6">
+        <div class="p-4 md:p-6 bg-gray-50 border-t">
+            <h2 class="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Détails des prestations sélectionnées</h2>
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left border-collapse bg-white rounded-lg overflow-hidden shadow-sm">
                     <thead>
-                        <tr class="border-b-2 border-gray-100 text-gray-400 text-[10px] uppercase">
-                            <th class="py-3 px-2">Prestation</th>
+                        <tr class="hb-blue text-white text-[10px] uppercase">
+                            <th class="py-3 px-4">Prestation</th>
                             <th class="py-3 px-2 text-center">Qté /an</th>
-                            <th class="py-3 px-2 text-right">Tarif Acte</th>
-                            <th class="py-3 px-2 text-right">Coût Abo</th>
+                            <th class="py-3 px-4 text-right">Tarif Acte</th>
+                            <th class="py-3 px-4 text-right">Coût Abo</th>
                         </tr>
                     </thead>
-                    <tbody id="services-list" class="divide-y divide-gray-50 text-sm">
+                    <tbody id="services-list" class="divide-y divide-gray-100 text-sm">
                         </tbody>
                 </table>
             </div>
 
-            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-gray-100 p-6 rounded-xl border border-gray-200 text-center">
-                    <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Sans abonnement</p>
-                    <p id="total-sans" class="text-4xl font-black text-gray-800">0€</p>
-                    <div class="mt-2 text-red-500 font-bold text-xs">❌ TARIF PUBLIC</div>
-                </div>
-
-                <div class="bg-blue-50 p-6 rounded-xl border-2 border-blue-900 text-center relative">
-                    <p class="text-[10px] hb-text-blue uppercase font-bold mb-1">Avec abonnement</p>
-                    <p id="total-avec" class="text-4xl font-black hb-text-blue">0€</p>
-                    <div class="mt-2 text-green-600 font-bold text-xs uppercase tracking-tight">✅ Abonnement Entretien</div>
-                </div>
-            </div>
-            
-            <div id="eco-banner" class="mt-4 bg-green-500 text-white text-center py-5 rounded-xl font-black text-2xl shadow-lg hidden">
-                GAIN POUR LE CLIENT : <span id="economie-val">0</span>€ / an
-            </div>
-
             <p class="mt-8 text-[9px] text-gray-400 text-center uppercase tracking-widest leading-relaxed">
-                Abonnement annuel : 300€. Main d'œuvre incluse sur toutes les prestations ci-dessus.<br>
+                Coût d'adhésion annuel : 300€. Main d'œuvre incluse sur toutes les prestations.<br>
                 Pièces incluses selon conditions (hors consommables spécifiques indiqués).
             </p>
         </div>
     </div>
 
     <script>
-        // Configuration avec les valeurs par défaut de ton slide
         const services = [
             { id: 'rev', name: 'Révision VAE (75€/u)', hors: 75, avec: 0, defaultQty: 2 },
             { id: 'crev', name: 'Crevaisons (25€/u - Pièces incl.)', hors: 25, avec: 0, defaultQty: 2 },
@@ -80,15 +76,15 @@
 
         function render() {
             list.innerHTML = services.map(s => `
-                <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="py-4 px-2 font-semibold text-gray-700 leading-tight">${s.name}</td>
+                <tr class="hover:bg-blue-50 transition-colors">
+                    <td class="py-4 px-4 font-semibold text-gray-700 leading-tight">${s.name}</td>
                     <td class="py-4 px-2 text-center">
-                        <select id="qty-${s.id}" onchange="calculate()" class="bg-white border-2 border-blue-100 rounded-lg p-1 px-2 font-bold text-blue-900 focus:border-blue-900 outline-none">
+                        <select id="qty-${s.id}" onchange="calculate()" class="bg-gray-50 border border-gray-300 rounded-lg p-1 px-3 font-bold text-blue-900 outline-none">
                             ${[0,1,2,3,4,5].map(v => `<option value="${v}" ${v === s.defaultQty ? 'selected' : ''}>${v}</option>`).join('')}
                         </select>
                     </td>
-                    <td class="py-4 px-2 text-right text-gray-400 font-medium">${s.hors}€</td>
-                    <td class="py-4 px-2 text-right hb-text-blue font-black">${s.avec}€</td>
+                    <td class="py-4 px-4 text-right text-gray-400 font-medium">${s.hors * (parseInt(document.getElementById('qty-'+s.id)?.value || s.defaultQty))}€</td>
+                    <td class="py-4 px-4 text-right hb-text-blue font-black text-lg">${s.avec * (parseInt(document.getElementById('qty-'+s.id)?.value || s.defaultQty))}€</td>
                 </tr>
             `).join('');
             calculate();
