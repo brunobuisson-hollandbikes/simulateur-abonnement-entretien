@@ -3,33 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comparateur Holland Bikes</title>
+    <title>Simulateur Abonnements Holland Bikes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hb-blue { background-color: #003057; }
         .hb-text-blue { color: #003057; }
     </style>
 </head>
-<body class="bg-gray-100 p-4 md:p-8">
-    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+<body class="bg-gray-100 p-2 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
         
-        <div class="hb-blue p-8 text-white text-center">
-            <img src="https://www.hollandbikes.com/modules/ps_emailsubscription/img/logo-footer.png" alt="Holland Bikes" class="h-12 mx-auto mb-4 brightness-0 invert">
-            <div class="border-2 border-white p-4 inline-block">
-                <p class="text-sm uppercase tracking-widest italic">Les</p>
-                <h1 class="text-2xl font-bold uppercase tracking-tighter">Abonnements Entretien</h1>
-            </div>
+        <div class="hb-blue p-4 text-white text-center">
+            <img src="Logo abonnement entretien.png" alt="Holland Bikes Abonnements" class="max-h-48 mx-auto object-contain">
         </div>
 
-        <div class="p-6">
+        <div class="p-4 text-center border-b italic text-gray-500 bg-gray-50 text-xs">
+            Simulation basée sur les besoins annuels d'entretien du client.
+        </div>
+
+        <div class="p-4 md:p-6">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b-2 border-gray-100 text-gray-400 text-[10px] uppercase tracking-wider">
+                        <tr class="border-b-2 border-gray-100 text-gray-400 text-[10px] uppercase">
                             <th class="py-3 px-2">Prestation</th>
                             <th class="py-3 px-2 text-center">Qté /an</th>
-                            <th class="py-3 px-2 text-right">Sans Abo</th>
-                            <th class="py-3 px-2 text-right">Avec Abo</th>
+                            <th class="py-3 px-2 text-right">Tarif Acte</th>
+                            <th class="py-3 px-2 text-right">Coût Abo</th>
                         </tr>
                     </thead>
                     <tbody id="services-list" class="divide-y divide-gray-50 text-sm">
@@ -38,35 +38,35 @@
             </div>
 
             <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-gray-100 p-5 rounded-xl border border-gray-200 text-center">
-                    <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Total sans abonnement</p>
+                <div class="bg-gray-100 p-6 rounded-xl border border-gray-200 text-center">
+                    <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Sans abonnement</p>
                     <p id="total-sans" class="text-4xl font-black text-gray-800">0€</p>
-                    <div class="mt-2 text-red-500 font-bold text-xs uppercase">❌ Pas d'abonnement</div>
+                    <div class="mt-2 text-red-500 font-bold text-xs">❌ TARIF PUBLIC</div>
                 </div>
 
-                <div class="bg-blue-50 p-5 rounded-xl border-2 border-blue-900 text-center relative">
-                    <p class="text-[10px] hb-text-blue uppercase font-bold mb-1">Total avec abonnement</p>
+                <div class="bg-blue-50 p-6 rounded-xl border-2 border-blue-900 text-center relative">
+                    <p class="text-[10px] hb-text-blue uppercase font-bold mb-1">Avec abonnement</p>
                     <p id="total-avec" class="text-4xl font-black hb-text-blue">0€</p>
-                    <div class="mt-2 text-green-600 font-bold text-xs uppercase">✅ Abonnement Inclus</div>
+                    <div class="mt-2 text-green-600 font-bold text-xs uppercase tracking-tight">✅ Abonnement Entretien</div>
                 </div>
             </div>
             
-            <div id="eco-banner" class="mt-4 bg-green-500 text-white text-center py-4 rounded-xl font-black text-xl shadow-lg hidden">
-                ÉCONOMIE ANNUELLE : <span id="economie-val">0</span>€
+            <div id="eco-banner" class="mt-4 bg-green-500 text-white text-center py-5 rounded-xl font-black text-2xl shadow-lg hidden">
+                GAIN POUR LE CLIENT : <span id="economie-val">0</span>€ / an
             </div>
 
             <p class="mt-8 text-[9px] text-gray-400 text-center uppercase tracking-widest leading-relaxed">
-                Tarifs basés sur l'abonnement annuel de 300€. <br>
-                MO = Main d'œuvre incluse. Pièces incluses selon conditions contractuelles.
+                Abonnement annuel : 300€. Main d'œuvre incluse sur toutes les prestations ci-dessus.<br>
+                Pièces incluses selon conditions (hors consommables spécifiques indiqués).
             </p>
         </div>
     </div>
 
     <script>
-        // Données basées sur ton slide (Quantités par défaut réglées pour atteindre 560€)
+        // Configuration avec les valeurs par défaut de ton slide
         const services = [
-            { id: 'rev', name: 'Révision VAE (75€ unité)', hors: 75, avec: 0, defaultQty: 2 },
-            { id: 'crev', name: 'Crevaisons (25€ unité - Pièces incl.)', hors: 25, avec: 0, defaultQty: 2 },
+            { id: 'rev', name: 'Révision VAE (75€/u)', hors: 75, avec: 0, defaultQty: 2 },
+            { id: 'crev', name: 'Crevaisons (25€/u - Pièces incl.)', hors: 25, avec: 0, defaultQty: 2 },
             { id: 'plaq', name: 'Plaquettes AV+AR (Pièces incl.)', hors: 70, avec: 0, defaultQty: 1 },
             { id: 'regl', name: 'Réglages freins + vitesses', hors: 45, avec: 0, defaultQty: 1 },
             { id: 'dev', name: 'Dévoilage roue', hors: 20, avec: 0, defaultQty: 1 },
@@ -81,17 +81,17 @@
         function render() {
             list.innerHTML = services.map(s => `
                 <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="py-4 px-2 font-semibold text-gray-700">${s.name}</td>
+                    <td class="py-4 px-2 font-semibold text-gray-700 leading-tight">${s.name}</td>
                     <td class="py-4 px-2 text-center">
-                        <select id="qty-${s.id}" onchange="calculate()" class="bg-white border border-gray-300 rounded-md p-1 focus:ring-blue-500 focus:border-blue-500 font-bold">
+                        <select id="qty-${s.id}" onchange="calculate()" class="bg-white border-2 border-blue-100 rounded-lg p-1 px-2 font-bold text-blue-900 focus:border-blue-900 outline-none">
                             ${[0,1,2,3,4,5].map(v => `<option value="${v}" ${v === s.defaultQty ? 'selected' : ''}>${v}</option>`).join('')}
                         </select>
                     </td>
-                    <td class="py-4 px-2 text-right text-gray-400">${s.hors}€</td>
-                    <td class="py-4 px-2 text-right hb-text-blue font-bold">${s.avec}€</td>
+                    <td class="py-4 px-2 text-right text-gray-400 font-medium">${s.hors}€</td>
+                    <td class="py-4 px-2 text-right hb-text-blue font-black">${s.avec}€</td>
                 </tr>
             `).join('');
-            calculate(); // Calcul initial
+            calculate();
         }
 
         function calculate() {
